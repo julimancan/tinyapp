@@ -1,9 +1,22 @@
 const express = require("express");
 const app = express();
 const PORT = 8080;
+const bodyParser = require("body-parser");
 
 app.set("view engine", "ejs");
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+const generateRandomString = () => {
+  let result = "";
+  const char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charLength = char.length;
+  for (let i = 0; i < 6; i++) {
+    result += char.charAt(Math.floor(Math.random() * charLength))
+  }
+  return result;
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -33,6 +46,17 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  res.send("Ok");
+});
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+
 app.get("/urls/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
@@ -42,3 +66,5 @@ app.get("/urls/:shortURL", (req, res) => {
     res.redirect("/urls")
   }
 });
+
+
