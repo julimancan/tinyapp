@@ -28,11 +28,6 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -46,16 +41,9 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-
-app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
-});
-
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
-
 
 app.get("/urls/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
@@ -67,4 +55,22 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL]
+  if (!urlDatabase[req.params.shortURL].startsWith('http')) {
+    longURL = `http://${urlDatabase[req.params.shortURL]}`;
+  };
+  res.redirect(longURL);
+});
 
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  // if (req.body.longURL)
+  const newUrl = generateRandomString();
+  urlDatabase[newUrl] = req.body.longURL;
+  res.redirect(`/urls/${newUrl}`);
+});
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
