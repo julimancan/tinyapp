@@ -40,8 +40,9 @@
             <form method="POST" action="/urls/<%= url %>/delete"><button type="submit" class="btn btn-danger">Delete</button></form>
           </td>
           <td>
-            <a class="nav-item nav-link" href="/urls/<%= url %>">
-              <button type="submit" class="btn btn-dark">Edit</button></form>
+            <form method="GET" action="/urls/<%= url %>">
+              <button type="submit" class="btn btn-dark" name="shortURL" value="<%= url %>">Edit</button>
+            </form>
             </a>
           </td>
         </tr>
