@@ -32,7 +32,7 @@ const generateRandomString = () => {
 
 
 // helper function to fund an email in the userdatabase returns userid.
-const findUserByEmail = email => {
+const findUserByEmail = (email, userDatabase) => {
   for (let userId in userDatabase) {
     if (userDatabase[userId].email === email) {
       return userDatabase[userId];
@@ -41,9 +41,9 @@ const findUserByEmail = email => {
 };
 
 // helper function to authenticate a user.
-const authenticateUser = (email, password) => {
-  const user = findUserByEmail(email);
-  if (user && user.password === password) {
+const authenticateUser = (email, password, userDatabase) => {
+  const user = findUserByEmail(email, userDatabase);
+  if (user && bcrypt.compareSync(password, user.password)) {
     return user;
   } else {
     return false;
@@ -53,7 +53,7 @@ const authenticateUser = (email, password) => {
 
 
 
-const urlsForUser = userId => urlDatabase[userId];
+
 
 
 // empty databases
@@ -70,15 +70,15 @@ const userDatabase = {};
 app.get("/urls", (req, res) => {
   const userId = req.session['user_id'];
   const loggedUser = userDatabase[userId];
- 
+
   let templateVars = {
     urlDatabase: urlDatabase[userId], currentUser: loggedUser
   };
-
+  console.log("logged user: ", loggedUser)
   if (loggedUser) {
     res.render("urls_index", templateVars);
   } else {
-    res.redirect("/login", templateVars);
+    res.redirect("/login");
   }
 
 });
@@ -93,7 +93,7 @@ app.get("/urls/new", (req, res) => {
   if (userId) {
     res.render("urls_new", templateVars);
   } else {
-    res.redirect("/login", templateVars);
+    res.redirect("/login");
   }
 });
 
@@ -139,12 +139,17 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let longURL = "";
+  console.log("short url: ", shortURL)
 
   for (let user in userDatabase) {
     if (urlDatabase[user][shortURL]) {
       longURL = urlDatabase[user][shortURL];
+      break;
     }
+  } 
+  if (!longURL) {
     res.status(400).send('Short URL not found!');
+    return;
   }
   if (!longURL.startsWith('http')) {
     longURL = `http://${longURL}`;
@@ -172,10 +177,11 @@ app.post("/login", (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
-  const user = authenticateUser(email, password);
+  const user = authenticateUser(email, password, userDatabase);
 
   if (user) {
-    req.session('user_id', user.userId);
+    console.log(user)
+    req.session.user_id = user.userId;
     res.redirect("/urls");
   } else {
     res.status(401).send('Wrong credentials!');
@@ -198,7 +204,7 @@ app.post("/urls", (req, res) => {
 
 //logs a user out/ clears the cookies, and redirects to the login page.
 app.post("/urls/logout", (req, res) => {
-  res.clearCookie('user_id', null);
+  req.session.user_id = null
   res.redirect("/login");
 });
 
@@ -210,9 +216,10 @@ app.post("/register", (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
-  const newUser = { userId, name, email, password: bcrypt.hashSync(password, saltRounds),
+  const newUser = {
+    userId, name, email, password: bcrypt.hashSync(password, saltRounds),
   };
-  const user = findUserByEmail(email);
+  const user = findUserByEmail(email, userDatabase);
   if (!email || !password) {
     res.status(400).send("email and/or password are invalid");
   } else if (user) {
@@ -220,6 +227,7 @@ app.post("/register", (req, res) => {
   } else {
     userDatabase[userId] = newUser;
     req.session['user_id'] = userId;
+    console.log(userDatabase)
     res.redirect("/urls");
   }
 });
