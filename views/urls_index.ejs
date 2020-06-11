@@ -31,21 +31,26 @@
         </tr>
       </thead>
       <tbody>
-        <% for(let url in urls) { %>
+
+        <% if (urlDatabase) { %>
+
+        <% for(let [shortUrl, longUrl] of Object.entries(urlDatabase)) { %>
 
         <tr>
-          <td><%= url %></td>
-          <td><%= urls[url] %></td>
+          <td><%= shortUrl %></td>
+          <td><%= longUrl %></td>
           <td>
-            <form method="POST" action="/urls/<%= url %>/delete"><button type="submit" class="btn btn-danger">Delete</button></form>
+            <form method="POST" action="/urls/<%= shortUrl %>/delete"><button type="submit"
+                class="btn btn-danger">Delete</button></form>
           </td>
           <td>
-            <form method="GET" action="/urls/<%= url %>">
-              <button type="submit" class="btn btn-dark" name="shortURL" value="<%= url %>">Edit</button>
+            <form method="GET" action="/urls/<%= shortUrl %>">
+              <button type="submit" class="btn btn-dark" name="shortURL" value="<%= shortUrl %>">Edit</button>
             </form>
             </a>
           </td>
         </tr>
+        <% } %>
         <% } %>
       </tbody>
     </table>

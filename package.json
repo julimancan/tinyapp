@@ -19,10 +19,13 @@
   },
   "homepage": "https://github.com/julimancan/tinyapp#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
+    "cookie-session": "^1.4.0",
     "ejs": "^3.1.3",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
