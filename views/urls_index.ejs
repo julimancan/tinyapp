@@ -13,8 +13,6 @@
 </head>
 
 <body>
-
-
   <header>
     <%- include("partials/_header") %>
   </header>
@@ -31,11 +29,8 @@
         </tr>
       </thead>
       <tbody>
-
         <% if (urlDatabase) { %>
-
         <% for(let [shortUrl, longUrl] of Object.entries(urlDatabase)) { %>
-
         <tr>
           <td><%= shortUrl %></td>
           <td><%= longUrl %></td>
@@ -45,7 +40,7 @@
           </td>
           <td>
             <form method="GET" action="/urls/<%= shortUrl %>">
-              <button type="submit" class="btn btn-dark" name="shortURL" value="<%= shortUrl %>">Edit</button>
+              <button type="submit" class="btn btn-success" name="shortURL" value="<%= shortUrl %>">Edit</button>
             </form>
             </a>
           </td>

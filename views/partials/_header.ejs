@@ -9,20 +9,19 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-
       </div>
     </div>
     <% if (!currentUser) { %>
     <a class="nav-item nav-link" href="/register">Register</a>
     <form class="form-inline" action="/login-button" method='POST'>
-      <button type="submit" class="btn btn-secondary">Login</button>
+      <button type="submit" class="btn btn-secondary btn-lg">Login</button>
       <!-- <input type="submit" -->
 
     </form>
     <% } else { %>
     <form class="form-inline" action="/urls/logout" method="POST">
-      <label>Logged in as <%= currentUser.name %></label>
-      <button type="submit" class="btn btn-success">Logout</button>
+      <label style="font-size:14px; color:#A9A9A9; padding:12px"><b>Logged in as <%= currentUser.name %></b></label>
+      <button type="submit" class="btn btn-outline-danger">Logout</button>
     </form>
     <% } %>
 
